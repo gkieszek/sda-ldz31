@@ -1,38 +1,28 @@
-package pl.sda.chuck.dto;
+package pl.sda.chuck.dao;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.List;
 
-/**
- * Sample joke below taken from: http://api.icndb.com/jokes/random
- * <p>
- * Inner class for joke: {@link Joke}
- * {
- * "type": "success",
- * "value": {
- * "id": 145,
- * "joke": "Chuck Norris is currently suing myspace for taking the name of what he calls everything around you.",
- * "categories": []
- * }
- * }
- */
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Builder
-public class JokeValue implements Serializable {
+@NoArgsConstructor
+@Entity
+public class JokeEntity {
+    @Id
+    @GeneratedValue
     Integer id;
-    @NotBlank
+    Integer externalId;
     String joke;
+    //TODO should be then moved to dedicated entity with many-to-many relationship
+    @ElementCollection
     List<String> categories;
 
     public Integer getId() {
@@ -41,6 +31,14 @@ public class JokeValue implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(Integer externalId) {
+        this.externalId = externalId;
     }
 
     public String getJoke() {

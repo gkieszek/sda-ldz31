@@ -6,9 +6,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JokeTest {
@@ -18,6 +24,29 @@ class JokeTest {
 
     //given
     Gson gson = new Gson();
+
+    @Test
+    @DisplayName("Joke value cannot be empty - negative")
+    public void validationTest() {
+        //given
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        Validator validator = validatorFactory.getValidator();
+        Joke joke = Joke.builder()
+                .type(SUCCESS)
+                .value(JokeValue.builder()
+                        .joke("")
+                        .id(1)
+                        .categories(List.of("nerdy"))
+                        .build())
+                .build();
+        //when
+        Set<ConstraintViolation<Joke>> violations = validator.validate(joke);
+        //then
+        assertFalse(violations.isEmpty());
+        violations.forEach(jokeConstraintViolation -> {
+            assertEquals("nie może być odstępem", jokeConstraintViolation.getMessage());
+        });
+    }
 
     @Test
     @DisplayName("Serialization test for Joke dto to json - positive")
